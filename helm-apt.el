@@ -251,7 +251,8 @@ Support install, remove and purge actions."
                       (purge     "sudo apt-get purge ")
                       (t          (error "Unknown action"))))
          (cands     (helm-marked-candidates))
-         (cand-list (mapconcat (lambda (x) (format "'%s'" x)) cands " ")))
+         (cand-list (mapconcat (lambda (x) (format "'%s'" x)) cands " "))
+         (inhibit-read-only t))
     (with-helm-display-marked-candidates
       "*apt candidates*"
       cands
