@@ -236,7 +236,7 @@ package name - description."
   (helm-apt-generic-action :action 'purge))
 
 (defvar term-char-mode-buffer-read-only)
-(defvar term-char-mode-buffer-read-only)
+(defvar term-char-mode-point-at-process-mark)
 
 (cl-defun helm-apt-generic-action (&key action)
   "Run 'apt-get ACTION'.
