@@ -262,6 +262,8 @@ Support install, remove and purge actions."
          (old--term-char-mode-point-at-process-mark
           (and (boundp 'term-char-mode-point-at-process-mark)
                term-char-mode-point-at-process-mark)))
+    (setq term-char-mode-point-at-process-mark nil
+          term-char-mode-buffer-read-only nil)
     (with-helm-display-marked-candidates
       "*apt candidates*"
       cands
