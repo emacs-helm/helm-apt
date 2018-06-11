@@ -235,6 +235,9 @@ package name - description."
   "Run 'apt-get purge' shell command on PACKAGE."
   (helm-apt-generic-action :action 'purge))
 
+(defvar term-char-mode-buffer-read-only)
+(defvar term-char-mode-buffer-read-only)
+
 (cl-defun helm-apt-generic-action (&key action)
   "Run 'apt-get ACTION'.
 Support install, remove and purge actions."
@@ -252,7 +255,13 @@ Support install, remove and purge actions."
                       (t          (error "Unknown action"))))
          (cands     (helm-marked-candidates))
          (cand-list (mapconcat (lambda (x) (format "'%s'" x)) cands " "))
-         (inhibit-read-only t))
+         (inhibit-read-only t)
+         (old--term-char-mode-buffer-read-only
+          (and (boundp 'term-char-mode-buffer-read-only)
+               term-char-mode-buffer-read-only))
+         (old--term-char-mode-point-at-process-mark
+          (and (boundp 'term-char-mode-point-at-process-mark)
+               term-char-mode-point-at-process-mark)))
     (with-helm-display-marked-candidates
       "*apt candidates*"
       cands
@@ -263,7 +272,12 @@ Support install, remove and purge actions."
           (insert (concat command cand-list))
           (setq helm-external-commands-list nil)
           (setq helm-apt-installed-packages nil)
-          (term-char-mode) (term-send-input))))))
+          (unwind-protect
+               (progn (term-char-mode) (term-send-input))
+            (setq term-char-mode-point-at-process-mark
+                  old--term-char-mode-point-at-process-mark
+                  term-char-mode-buffer-read-only
+                  old--term-char-mode-buffer-read-only)))))))
 
 ;;;###autoload
 (defun helm-apt (arg)
