@@ -72,6 +72,19 @@ If nil default `helm-apt-cache-show-1' will be used."
     map))
 
 
+;;; Help
+;;
+(defvar helm-apt-help-message
+  "* Helm APT
+
+** Commands
+\\<helm-apt-map>
+\\[helm-apt-show-all]\t\tShow all packages.
+\\[helm-apt-show-only-installed]\t\tShow installed packages only.
+\\[helm-apt-show-only-not-installed]\t\tShow non-installed packages only.
+\\[helm-apt-show-only-deinstalled]\t\tShow uninstalled (not purged yet) packages only.")
+
+
 (defvar helm-source-apt
   (helm-build-in-buffer-source "APT"
     :init #'helm-apt-init
