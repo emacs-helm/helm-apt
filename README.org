@@ -1,0 +1,21 @@
+[[https://github.com/emacs-helm/helm-recoll/blob/master/LICENSE][file:http://img.shields.io/badge/license-GNU%20GPLv3-blue.svg]]
+[[http://stable.melpa.org/#/helm-recoll][file:http://stable.melpa.org/packages/helm-apt-badge.svg]]
+[[http://melpa.org/#/helm-recoll][file:http://melpa.org/packages/helm-apt-badge.svg]]
+
+* Helm interface to apt package manager.
+
+An alternative to helm-system-packages for those who use only apt
+package manager (Ubuntu, Debian, LinuxMint etc...)
+
+** Features
+- List Apt packages
+- Allows installing, deinstalling, show description
+
+** Install
+
+You can get this package from Melpa with your Emacs package manager.
+M-x package-install RET helm-apt RET
+
+** Usage
+
+M-x helm-apt

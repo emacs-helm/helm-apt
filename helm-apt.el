@@ -117,10 +117,11 @@ If nil default `helm-apt-cache-show-1' will be used."
   (setq helm-apt-all-packages nil))
 
 (defun helm-apt-persistent-action (candidate)
-  "Persistent action for APT source."
+  "Run persistent action on CANDIDATE for APT source."
   (helm-apt-cache-show candidate))
 
 (defun helm-apt--installed-package-name (name)
+  "Return non nil if package named NAME is installed."
   (cl-loop for arch in helm-apt-default-archs
            thereis (or (assoc-default
                         name helm-apt-installed-packages)
@@ -150,6 +151,7 @@ If nil default `helm-apt-cache-show-1' will be used."
         when show collect show))
 
 (defun helm-apt-show-only-installed ()
+  "Show only installed apt packages."
   (interactive)
   (with-helm-alive-p
     (setq helm-apt-show-only 'installed)
@@ -157,6 +159,7 @@ If nil default `helm-apt-cache-show-1' will be used."
 (put 'helm-apt-show-only-installed 'helm-only t)
 
 (defun helm-apt-show-only-not-installed ()
+  "Show only not installed apt packages."
   (interactive)
   (with-helm-alive-p
     (setq helm-apt-show-only 'noinstalled)
@@ -164,6 +167,7 @@ If nil default `helm-apt-cache-show-1' will be used."
 (put 'helm-apt-show-only-not-installed 'helm-only t)
 
 (defun helm-apt-show-only-deinstalled ()
+  "Show only deinstalled apt packages."
   (interactive)
   (with-helm-alive-p
     (setq helm-apt-show-only 'deinstalled)
@@ -171,6 +175,7 @@ If nil default `helm-apt-cache-show-1' will be used."
 (put 'helm-apt-show-only-deinstalled 'helm-only t)
 
 (defun helm-apt-show-all ()
+  "Show all apt packages."
   (interactive)
   (with-helm-alive-p
     (setq helm-apt-show-only 'all)
@@ -223,6 +228,7 @@ package name - description."
     (helm-apt-cache-show-1 package)))
 
 (defun helm-apt-cache-show-1 (package)
+  "[INTERNAL] Called by `helm-apt-cache-show' with PACKAGE as arg."
   (let* ((command (format helm-apt-show-command package))
          (buf     (get-buffer-create "*helm apt show*")))
     (switch-to-buffer buf)
@@ -237,19 +243,19 @@ package name - description."
          package)))
 
 (defun helm-apt-install (_package)
-  "Run 'apt-get install' shell command on PACKAGE."
+  "Run 'apt-get install' shell command."
   (helm-apt-generic-action :action 'install))
 
 (defun helm-apt-reinstall (_package)
-  "Run 'apt-get install --reinstall' shell command on PACKAGE."
+  "Run 'apt-get install --reinstall' shell command."
   (helm-apt-generic-action :action 'reinstall))
 
 (defun helm-apt-uninstall (_package)
-  "Run 'apt-get remove' shell command on PACKAGE."
+  "Run 'apt-get remove' shell command."
   (helm-apt-generic-action :action 'uninstall))
 
 (defun helm-apt-purge (_package)
-  "Run 'apt-get purge' shell command on PACKAGE."
+  "Run 'apt-get purge' shell command."
   (helm-apt-generic-action :action 'purge))
 
 (defvar term-char-mode-buffer-read-only)
@@ -280,7 +286,7 @@ Support install, remove and purge actions."
       (with-helm-display-marked-candidates
         "*apt candidates*"
         cands
-        (when (y-or-n-p (format "%s package(s)" (symbol-name action)))
+        (when (y-or-n-p (format "%s package(s)? " (symbol-name action)))
           (with-current-buffer helm-apt-term-buffer
             (goto-char (process-mark (get-buffer-process (current-buffer))))
             (delete-region (point) (point-max))
@@ -292,7 +298,7 @@ Support install, remove and purge actions."
 ;;;###autoload
 (defun helm-apt (arg)
   "Preconfigured `helm' : frontend of APT package manager.
-With a prefix arg reload cache."
+With a prefix ARG reload cache."
   (interactive "P")
   (setq helm-apt-show-only 'all)
   (unless helm-apt-default-archs
