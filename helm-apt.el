@@ -235,7 +235,8 @@ package name - description."
   "[INTERNAL] Called by `helm-apt-cache-show' with PACKAGE as arg."
   (let* ((command (format helm-apt-show-command package))
          (buf     (get-buffer-create "*helm apt show*")))
-    (switch-to-buffer buf)
+    (display-buffer buf)
+    (set-buffer buf)
     (unless (string= package helm-apt-show-current-package)
       (let ((inhibit-read-only t))
         (erase-buffer)
