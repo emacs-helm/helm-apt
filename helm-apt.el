@@ -288,17 +288,18 @@ Support install, remove and purge actions."
            (cands     (helm-marked-candidates))
            (cand-list (mapconcat (lambda (x) (format "'%s'" x)) cands " "))
            (inhibit-read-only t))
-      (with-helm-display-marked-candidates
-        "*apt candidates*"
-        cands
-        (when (y-or-n-p (format "%s package(s)? " (symbol-name action)))
-          (with-current-buffer helm-apt-term-buffer
-            (goto-char (process-mark (get-buffer-process (current-buffer))))
-            (delete-region (point) (point-max))
-            (insert (concat command cand-list))
-            (setq helm-external-commands-list nil)
-            (setq helm-apt-installed-packages nil)
-            (term-char-mode) (term-send-input)))))))
+      (save-window-excursion
+        (with-helm-display-marked-candidates
+          "*apt candidates*"
+          cands
+          (when (y-or-n-p (format "%s package(s)? " (symbol-name action)))
+            (with-current-buffer helm-apt-term-buffer
+              (goto-char (process-mark (get-buffer-process (current-buffer))))
+              (delete-region (point) (point-max))
+              (insert (concat command cand-list))
+              (setq helm-external-commands-list nil)
+              (setq helm-apt-installed-packages nil)
+              (term-char-mode) (term-send-input))))))))
 
 ;;;###autoload
 (defun helm-apt (arg)
