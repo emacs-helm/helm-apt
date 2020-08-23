@@ -219,7 +219,19 @@ package name - description."
 (defvar helm-apt-show-current-package nil)
 (define-derived-mode helm-apt-show-mode
     special-mode "helm-apt-show"
-    "Mode to display infos on apt packages.")
+    "Mode to display infos on apt packages."
+    (font-lock-add-keywords nil '(("^\\(.*: \\).*" 1 '((:foreground "Darkslategray1")))))
+    (font-lock-add-keywords nil '(("^\\(.*: \\)\\(.*\\)" 2 '((:foreground "DarkOrange")))))
+    (font-lock-add-keywords nil '(("\\(https?://\\)\\(.*\\)" 0 '((:foreground "#73d216" :weight bold :underline t)))))
+    (goto-char (point-min))
+    (let ((map (make-sparse-keymap))
+          (inhibit-read-only t))
+      ;; TODO Add mouse support as well.
+      (define-key map (kbd "RET") 'browse-url-at-point)
+      (while (re-search-forward "https?://.*" nil t)
+        (add-text-properties
+         (match-beginning 0) (match-end 0)
+         `(keymap ,map help-echo "Browse url")))))
 
 (defun helm-apt-cache-show (package)
   "Show information on apt package PACKAGE."
