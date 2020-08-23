@@ -299,7 +299,9 @@ Support install, remove and purge actions."
               (insert (concat command cand-list))
               (setq helm-external-commands-list nil)
               (setq helm-apt-installed-packages nil)
-              (term-char-mode) (term-send-input))))))))
+              (term-char-mode)
+              (when (< emacs-major-version 27)
+                (term-send-input)))))))))
 
 ;;;###autoload
 (defun helm-apt (arg)
