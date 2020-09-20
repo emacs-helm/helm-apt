@@ -289,8 +289,8 @@ Support install, remove and purge actions."
              (buffer-live-p (get-buffer helm-apt-term-buffer)))
         (switch-to-buffer helm-apt-term-buffer)
       (ansi-term (getenv "SHELL") "term apt")
-      (setq helm-apt-term-buffer (buffer-name))
-      (term-line-mode))
+      (setq helm-apt-term-buffer (buffer-name)))
+    (term-line-mode)
     (let* ((command   (cl-case action
                         (install   "sudo apt-get install ")
                         (reinstall "sudo apt-get install --reinstall ")
