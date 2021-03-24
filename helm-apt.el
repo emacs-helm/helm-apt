@@ -87,10 +87,12 @@ If nil default `helm-apt-cache-show-1' will be used."
 
 ** Commands
 \\<helm-apt-map>
-\\[helm-apt-show-all]\t\tShow all packages.
-\\[helm-apt-show-only-installed]\t\tShow installed packages only.
-\\[helm-apt-show-only-not-installed]\t\tShow non-installed packages only.
-\\[helm-apt-show-only-deinstalled]\t\tShow uninstalled (not purged yet) packages only.")
+|Keys|Description
+|-----------+----------|
+|\\[helm-apt-show-all]|Show all packages.
+|\\[helm-apt-show-only-installed]|Show installed packages only.
+|\\[helm-apt-show-only-not-installed]|Show non-installed packages only.
+|\\[helm-apt-show-only-deinstalled]|Show uninstalled (not purged yet) packages only.")
 
 
 (defvar helm-source-apt
