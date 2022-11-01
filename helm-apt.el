@@ -218,6 +218,11 @@ LINE is displayed like:
 package name - description."
   (car (split-string line " - ")))
 
+(defun helm-apt-browse-url (_event)
+  "browse-url-at-point on mouse click."
+  (interactive "e")
+  (browse-url-at-point))
+
 (defvar helm-apt-show-current-package nil)
 (define-derived-mode helm-apt-show-mode
     special-mode "helm-apt-show"
@@ -230,10 +235,13 @@ package name - description."
           (inhibit-read-only t))
       ;; TODO Add mouse support as well.
       (define-key map (kbd "RET") 'browse-url-at-point)
+      (define-key map [mouse-1] 'helm-apt-browse-url)
       (while (re-search-forward "https?://.*" nil t)
         (add-text-properties
          (match-beginning 0) (match-end 0)
-         `(keymap ,map help-echo "Browse url")))))
+         `(keymap ,map
+           help-echo "Mouse-1:Browse url"
+           mouse-face highlight)))))
 
 (defun helm-apt-cache-show (package)
   "Show information on apt package PACKAGE."
