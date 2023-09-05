@@ -270,26 +270,26 @@ package name - description."
          package)))
 
 (defun helm-apt-install (_package)
-  "Run 'apt-get install' shell command."
+  "Run \"apt-get install\" shell command."
   (helm-apt-generic-action :action 'install))
 
 (defun helm-apt-reinstall (_package)
-  "Run 'apt-get install --reinstall' shell command."
+  "Run \"apt-get install --reinstall\" shell command."
   (helm-apt-generic-action :action 'reinstall))
 
 (defun helm-apt-uninstall (_package)
-  "Run 'apt-get remove' shell command."
+  "Run \"apt-get remove\" shell command."
   (helm-apt-generic-action :action 'uninstall))
 
 (defun helm-apt-purge (_package)
-  "Run 'apt-get purge' shell command."
+  "Run \"apt-get purge\" shell command."
   (helm-apt-generic-action :action 'purge))
 
 (defvar term-char-mode-buffer-read-only)
 (defvar term-char-mode-point-at-process-mark)
 
 (cl-defun helm-apt-generic-action (&key action)
-  "Run 'apt-get ACTION'.
+  "Run \"apt-get ACTION\".
 Support install, remove and purge actions."
   ;; Reproduce the Emacs-25 behavior to be able to edit and send
   ;; command in term buffer.
