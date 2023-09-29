@@ -229,13 +229,15 @@ If nil default `helm-apt-cache-show-1' will be used."
 
 (defun helm-apt-cache-show (package)
   "Show information on apt package PACKAGE."
-  (if (and (functionp helm-apt-cache-show-function)
-           (not (eq helm-apt-cache-show-function
-                    'helm-apt-cache-show)))
-      ;; A function, call it.
-      (funcall helm-apt-cache-show-function package)
-    ;; nil or whatever use default.
-    (helm-apt-cache-show-1 package)))
+  (if (get-buffer-window "*helm apt show*" 'visible)
+      (kill-buffer "*helm apt show*")
+    (if (and (functionp helm-apt-cache-show-function)
+             (not (eq helm-apt-cache-show-function
+                      'helm-apt-cache-show)))
+        ;; A function, call it.
+        (funcall helm-apt-cache-show-function package)
+      ;; nil or whatever use default.
+      (helm-apt-cache-show-1 package))))
 
 (defun helm-apt-cache-show-1 (package)
   "[INTERNAL] Called by `helm-apt-cache-show' with PACKAGE as arg."
