@@ -136,7 +136,7 @@ If nil default `helm-apt-cache-show-1' will be used."
   "Show installed CANDIDATES and the ones to deinstall in a different color."
   (cl-loop with lgst = (helm-in-buffer-get-longest-candidate)
            for cand in candidates
-           for sep = (helm-in-buffer-make-separator cand lgst)
+           for sep = (helm-make-separator cand lgst)
            for iname = (helm-apt--installed-package-name cand)
            for deinstall = (string= iname "deinstall")
            for install = (string= iname "install")
