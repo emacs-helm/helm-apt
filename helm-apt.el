@@ -350,6 +350,67 @@ With a prefix ARG reload cache."
         :buffer "*helm apt*"
         :history 'helm-apt-input-history))
 
+;;;###autoload
+(defun helm-apt-search ()
+  "Search in pkg names and their whole description asynchronously."
+  (interactive)
+  (unless helm-apt-installed-packages
+    (setq helm-apt-installed-packages
+          (with-temp-buffer
+            (call-process-shell-command "dpkg --get-selections"
+                                        nil (current-buffer))
+            (cl-loop for i in (split-string (buffer-string) "\n" t)
+                     for p = (split-string i)
+                     collect (cons (car p) (cadr p))))))
+  (helm :sources (helm-build-async-source
+                     "Apt async"
+                   :candidates-process
+                   (lambda ()
+                     (let* ((patterns (helm-mm-split-pattern helm-pattern t))
+                            (pipe-cmd "grep")
+                            (cmd (helm-aif (cdr patterns)
+                                     (format "apt-cache search %s %s"
+                                             (car patterns)
+                                             (cl-loop for p in it concat
+                                                      (format " | %s -- %s"
+                                                              pipe-cmd
+                                                              (shell-quote-argument p))))
+                                   (format "apt-cache search %s"
+                                           helm-pattern
+                                           )))
+                            (proc (start-process-shell-command
+                                  "Apt-async" nil
+                                  cmd)))
+                       proc))
+                   :filtered-candidate-transformer
+                   (lambda (candidates _source)
+                     (cl-loop for cand in candidates
+                              for split = (split-string cand " - ")
+                              for name = (car split)
+                              for iname = (helm-apt--installed-package-name name)
+                              for deinstall = (string= iname "deinstall")
+                              for install = (string= iname "install")
+                              for disp1 = (cond ((and deinstall
+                                                      (memq helm-apt-show-only '(all deinstalled)))
+                                                 (propertize name 'face 'helm-apt-deinstalled))
+                                                ((and install
+                                                      (memq helm-apt-show-only '(all installed)))
+                                                 (propertize name 'face 'helm-apt-installed))
+                                                ((and (eq helm-apt-show-only 'noinstalled)
+                                                      (not install))
+                                                 name)
+                                                ((eq helm-apt-show-only 'all) name))
+                              for desc = (cadr split)
+                              for sep = (helm-make-separator name 40)
+                              collect (cons (concat
+                                             disp1
+                                             sep
+                                             (propertize
+                                              desc 'face 'font-lock-warning-face))
+                                            name)))
+                   :action helm-apt-actions
+                   :requires-pattern 2)
+        :buffer "*helm apt async*"))
 
 (provide 'helm-apt)
 
