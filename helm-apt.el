@@ -229,7 +229,10 @@ If nil default `helm-apt-cache-show-1' will be used."
 
 (defun helm-apt-cache-show (package)
   "Show information on apt package PACKAGE."
-  (if (get-buffer-window "*helm apt show*" 'visible)
+  (if (and (get-buffer-window "*helm apt show*" 'visible)
+           (string= package (buffer-local-value
+                             'helm-apt-show-current-package
+                             (get-buffer "*helm apt show*"))))
       (kill-buffer "*helm apt show*")
     (if (and (functionp helm-apt-cache-show-function)
              (not (eq helm-apt-cache-show-function
