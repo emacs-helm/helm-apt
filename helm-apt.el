@@ -357,6 +357,16 @@ With a prefix ARG reload cache."
 (defun helm-apt-search ()
   "Search in pkg names and their whole description asynchronously."
   (interactive)
+  (unless helm-apt-default-archs
+    (setq helm-apt-default-archs
+          (append (split-string
+                   (shell-command-to-string
+                    "dpkg --print-architecture")
+                   "\n" t)
+                  (split-string
+                   (shell-command-to-string
+                    "dpkg --print-foreign-architectures")
+                   "\n" t))))
   (unless helm-apt-installed-packages
     (setq helm-apt-installed-packages
           (with-temp-buffer
