@@ -140,7 +140,6 @@ If nil default `helm-apt-cache-show-1' will be used."
   (interactive "e")
   (browse-url-at-point))
 
-
 (defun helm-apt-install (_package)
   "Run \"apt-get install\" shell command."
   (helm-apt-generic-action :action 'install))
@@ -271,7 +270,7 @@ Support install, remove and purge actions."
   (helm :sources (helm-build-async-source "Apt async"
                    :candidates-process #'helm-apt-search-init
                    :filtered-candidate-transformer #'helm-apt-search-transformer
-                   :action helm-apt-actions
+                   :action 'helm-apt-actions
                    :requires-pattern 2)
         :buffer "*helm apt async*"))
 
