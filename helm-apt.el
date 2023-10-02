@@ -390,16 +390,11 @@ With a prefix ARG reload cache."
                               for iname = (helm-apt--installed-package-name name)
                               for deinstall = (string= iname "deinstall")
                               for install = (string= iname "install")
-                              for disp1 = (cond ((and deinstall
-                                                      (memq helm-apt-show-only '(all deinstalled)))
+                              for disp1 = (cond (deinstall
                                                  (propertize name 'face 'helm-apt-deinstalled))
-                                                ((and install
-                                                      (memq helm-apt-show-only '(all installed)))
+                                                (install
                                                  (propertize name 'face 'helm-apt-installed))
-                                                ((and (eq helm-apt-show-only 'noinstalled)
-                                                      (not install))
-                                                 name)
-                                                ((eq helm-apt-show-only 'all) name))
+                                                (t name))
                               for desc = (cadr split)
                               for sep = (helm-make-separator name 40)
                               collect (cons (concat
