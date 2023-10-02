@@ -353,6 +353,44 @@ With a prefix ARG reload cache."
         :buffer "*helm apt*"
         :history 'helm-apt-input-history))
 
+(defun helm-apt-search-init ()
+  "Initialize async process for `helm-apt-search'."
+  (let* ((patterns (helm-mm-split-pattern helm-pattern t))
+         (pipe-cmd "grep")
+         (cmd (helm-aif (cdr patterns)
+                  (format "apt-cache search %s %s"
+                          (car patterns)
+                          (cl-loop for p in it concat
+                                   (format " | %s -- %s"
+                                           pipe-cmd
+                                           (shell-quote-argument p))))
+                (format "apt-cache search %s" helm-pattern)))
+         (proc (start-process-shell-command
+                "Apt-async" nil cmd)))
+    proc))
+
+(defun helm-apt-search-transformer (candidates _source)
+  "The filtered-candidate-transformer for `helm-apt-search'."
+  (cl-loop for cand in candidates
+           for split = (split-string cand " - ")
+           for name = (car split)
+           for iname = (helm-apt--installed-package-name name)
+           for deinstall = (string= iname "deinstall")
+           for install = (string= iname "install")
+           for disp1 = (cond (deinstall
+                              (propertize name 'face 'helm-apt-deinstalled))
+                             (install
+                              (propertize name 'face 'helm-apt-installed))
+                             (t name))
+           for desc = (cadr split)
+           for sep = (helm-make-separator name 40)
+           collect (cons (concat
+                          disp1
+                          sep
+                          (propertize
+                           desc 'face 'font-lock-warning-face))
+                         name)))
+
 ;;;###autoload
 (defun helm-apt-search ()
   "Search in pkg names and their whole description asynchronously."
@@ -375,47 +413,9 @@ With a prefix ARG reload cache."
             (cl-loop for i in (split-string (buffer-string) "\n" t)
                      for p = (split-string i)
                      collect (cons (car p) (cadr p))))))
-  (helm :sources (helm-build-async-source
-                     "Apt async"
-                   :candidates-process
-                   (lambda ()
-                     (let* ((patterns (helm-mm-split-pattern helm-pattern t))
-                            (pipe-cmd "grep")
-                            (cmd (helm-aif (cdr patterns)
-                                     (format "apt-cache search %s %s"
-                                             (car patterns)
-                                             (cl-loop for p in it concat
-                                                      (format " | %s -- %s"
-                                                              pipe-cmd
-                                                              (shell-quote-argument p))))
-                                   (format "apt-cache search %s"
-                                           helm-pattern
-                                           )))
-                            (proc (start-process-shell-command
-                                  "Apt-async" nil
-                                  cmd)))
-                       proc))
-                   :filtered-candidate-transformer
-                   (lambda (candidates _source)
-                     (cl-loop for cand in candidates
-                              for split = (split-string cand " - ")
-                              for name = (car split)
-                              for iname = (helm-apt--installed-package-name name)
-                              for deinstall = (string= iname "deinstall")
-                              for install = (string= iname "install")
-                              for disp1 = (cond (deinstall
-                                                 (propertize name 'face 'helm-apt-deinstalled))
-                                                (install
-                                                 (propertize name 'face 'helm-apt-installed))
-                                                (t name))
-                              for desc = (cadr split)
-                              for sep = (helm-make-separator name 40)
-                              collect (cons (concat
-                                             disp1
-                                             sep
-                                             (propertize
-                                              desc 'face 'font-lock-warning-face))
-                                            name)))
+  (helm :sources (helm-build-async-source "Apt async"
+                   :candidates-process #'helm-apt-search-init
+                   :filtered-candidate-transformer #'helm-apt-search-transformer
                    :action helm-apt-actions
                    :requires-pattern 2)
         :buffer "*helm apt async*"))
