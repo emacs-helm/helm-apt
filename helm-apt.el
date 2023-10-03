@@ -218,7 +218,7 @@ Support install, remove and purge actions."
                                    (format " | %s -- %s"
                                            pipe-cmd
                                            (shell-quote-argument p))))
-                (format "apt-cache search %s" helm-pattern)))
+                (format "apt-cache search %s" (shell-quote-argument helm-pattern))))
          (proc (start-process-shell-command
                 "Apt-async" nil cmd)))
     proc))
