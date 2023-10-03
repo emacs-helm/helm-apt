@@ -193,8 +193,7 @@ Support install, remove and purge actions."
               (setq helm-external-commands-list nil)
               (setq helm-apt-installed-packages nil)
               (term-char-mode)
-              (when (< emacs-major-version 27)
-                (term-send-input)))))))))
+              (term-send-input))))))))
 
 ;;; helm-apt-search
 ;;
