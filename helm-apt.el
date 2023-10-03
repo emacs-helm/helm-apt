@@ -210,10 +210,13 @@ Support install, remove and purge actions."
          (cmd (helm-aif (cdr patterns)
                   (format "apt-cache search %s %s"
                           (car patterns)
-                          (cl-loop for p in it concat
-                                   (format " | %s -- %s"
-                                           pipe-cmd
-                                           (shell-quote-argument p))))
+                          (cl-loop for p in it
+                                   for no = (string-match "\\`!" p)
+                                   for pat = (shell-quote-argument
+                                              (if no (substring p 1) p))
+                                   concat
+                                   (format " | %s%s %s"
+                                           pipe-cmd (if no " -v" "") pat)))
                 (format "apt-cache search %s" (shell-quote-argument helm-pattern))))
          (proc (start-process-shell-command
                 "Apt-async" nil cmd)))
