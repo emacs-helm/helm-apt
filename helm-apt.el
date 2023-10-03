@@ -52,8 +52,7 @@
 Default is `helm-apt-cache-show-1' but you can use `apt-utils-show-package-1'
 from `apt-utils.el' to have something more enhanced.
 If nil default `helm-apt-cache-show-1' will be used."
-  :type 'function
-  :group 'helm-apt)
+  :type 'function)
 
 (defcustom helm-apt-actions
   '(("Show package description" . helm-apt-cache-show)
@@ -66,13 +65,11 @@ If nil default `helm-apt-cache-show-1' will be used."
 
 (defface helm-apt-installed
     '((t (:inherit font-lock-type-face)))
-  "Face used for apt installed candidates."
-  :group 'helm-apt)
+  "Face used for apt installed candidates.")
 
 (defface helm-apt-deinstalled
     '((t (:inherit font-lock-doc-face)))
-  "Face used for apt deinstalled candidates."
-  :group 'helm-apt)
+  "Face used for apt deinstalled candidates.")
 
 
 ;;; A mode to show package descriptions
