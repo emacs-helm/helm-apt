@@ -197,7 +197,7 @@ Support install, remove and purge actions."
 
 ;;; helm-apt-search
 ;;
-(defun helm-apt--installed-package-name (name)
+(defsubst helm-apt--installed-package-name (name)
   "Return non nil if package named NAME is installed."
   (cl-loop for arch in helm-apt-default-archs
            thereis (or (assoc-default
