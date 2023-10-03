@@ -65,12 +65,12 @@ If nil default `helm-apt-cache-show-1' will be used."
   :type '(alist :key-type string :value-type function))
 
 (defface helm-apt-installed
-    '((t (:foreground "green")))
+    '((t (:inherit font-lock-type-face)))
   "Face used for apt installed candidates."
   :group 'helm-apt)
 
 (defface helm-apt-deinstalled
-    '((t (:foreground "DimGray")))
+    '((t (:inherit font-lock-doc-face)))
   "Face used for apt deinstalled candidates."
   :group 'helm-apt)
 
