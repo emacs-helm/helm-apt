@@ -41,6 +41,7 @@
 (defvar helm-apt-installed-packages nil)
 (defvar helm-apt-term-buffer nil)
 (defvar helm-apt-default-archs nil)
+(defvar helm-apt--max-len-candidate 0)
 
 
 (defgroup helm-apt nil
@@ -236,7 +237,7 @@ Support install, remove and purge actions."
                               (propertize name 'face 'helm-apt-installed))
                              (t name))
            for desc = (cadr split)
-           for sep = (helm-make-separator name 40)
+           for sep = (helm-make-separator name helm-apt--max-len-candidate)
            collect (cons (concat
                           disp1
                           sep
@@ -248,9 +249,10 @@ Support install, remove and purge actions."
   (sort candidates #'helm-generic-sort-fn))
 
 ;;;###autoload
-(defun helm-apt-search ()
+(defun helm-apt-search (&optional arg)
   "Search in pkg names and their whole description asynchronously."
-  (interactive)
+  (interactive "P")
+  (when arg (setq helm-apt-installed-packages nil))
   (unless helm-apt-default-archs
     (setq helm-apt-default-archs
           (append (split-string
@@ -268,7 +270,11 @@ Support install, remove and purge actions."
                                         nil (current-buffer))
             (cl-loop for i in (split-string (buffer-string) "\n" t)
                      for p = (split-string i)
-                     collect (cons (car p) (cadr p))))))
+                     for key = (car p)
+                     for val =  (cadr p)
+                     do (setq helm-apt--max-len-candidate
+                              (max (length key) helm-apt--max-len-candidate))
+                     collect (cons key val)))))
   (helm :sources (helm-build-async-source "Apt async"
                    :candidates-process #'helm-apt-search-init
                    :filtered-candidate-transformer '(helm-apt-search-transformer
