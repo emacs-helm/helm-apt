@@ -244,6 +244,9 @@ Support install, remove and purge actions."
                            desc 'face 'font-lock-warning-face))
                          name)))
 
+(defun helm-apt-search-sort-transformer (candidates _source)
+  (sort candidates #'helm-generic-sort-fn))
+
 ;;;###autoload
 (defun helm-apt-search ()
   "Search in pkg names and their whole description asynchronously."
@@ -268,7 +271,8 @@ Support install, remove and purge actions."
                      collect (cons (car p) (cadr p))))))
   (helm :sources (helm-build-async-source "Apt async"
                    :candidates-process #'helm-apt-search-init
-                   :filtered-candidate-transformer #'helm-apt-search-transformer
+                   :filtered-candidate-transformer '(helm-apt-search-transformer
+                                                     helm-apt-search-sort-transformer)
                    :action 'helm-apt-actions
                    :requires-pattern 2)
         :buffer "*helm apt async*"))
