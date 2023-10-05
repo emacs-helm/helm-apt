@@ -48,6 +48,24 @@
   "Apt related Applications and libraries for Helm."
   :group 'helm)
 
+(defcustom helm-apt-pipe-command "grep"
+  "The command used for multi match.
+I.e. When using multiple patterns the initial command
+`helm-apt-search-command' is piped to this command (default is grep)."
+  :type 'string)
+
+(defcustom helm-apt-pipe-command-no-switch " -v"
+  "The option passed to `helm-apt-pipe-command' for negation.
+Don't forget the leading space."
+  :type 'string)
+
+(defcustom helm-apt-search-command "apt-cache search %s"
+  "The command used to search packages.
+By default this command search in package names and their whole
+description, if you want to search only in package names use
+\"--names-only\" option."
+  :type 'string)
+
 (defcustom helm-apt-cache-show-function 'helm-apt-cache-show-1
   "Function of one argument used to show apt package.
 Default is `helm-apt-cache-show-1' but you can use `apt-utils-show-package-1'
@@ -207,9 +225,8 @@ Support install, remove and purge actions."
 (defun helm-apt-search-init ()
   "Initialize async process for `helm-apt-search'."
   (let* ((patterns (helm-mm-split-pattern helm-pattern t))
-         (pipe-cmd "grep")
          (cmd (helm-aif (cdr patterns)
-                  (format "apt-cache search %s %s"
+                  (format (concat helm-apt-search-command " %s")
                           (car patterns)
                           (cl-loop for p in it
                                    for no = (string-match "\\`!" p)
@@ -217,8 +234,13 @@ Support install, remove and purge actions."
                                               (if no (substring p 1) p))
                                    concat
                                    (format " | %s%s %s"
-                                           pipe-cmd (if no " -v" "") pat)))
-                (format "apt-cache search %s" (shell-quote-argument helm-pattern))))
+                                           helm-apt-pipe-command
+                                           (if no
+                                               helm-apt-pipe-command-no-switch
+                                             "")
+                                           pat)))
+                (format helm-apt-search-command
+                        (shell-quote-argument helm-pattern))))
          (proc (start-process-shell-command
                 "Apt-async" nil cmd)))
     proc))
